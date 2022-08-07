@@ -4,9 +4,9 @@ final theme = ThemeData(
   iconTheme: IconThemeData(
       color: Colors.blue
   ),
-  textTheme: TextTheme(
-    bodyText2: TextStyle( color : Colors.grey)
-  ),
+  // textTheme: TextTheme(
+  //   bodyText2: TextStyle( color : Colors.grey)
+  // ),
   appBarTheme: AppBarTheme(
       color: Colors.white,
       elevation: 1,
