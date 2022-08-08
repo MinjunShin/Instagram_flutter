@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import './style.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 void main() {
-  runApp(MaterialApp(theme: theme, home: MyApp()));
+  runApp(MaterialApp(
+    theme: theme,
+    initialRoute: '/',
+    routes: {
+      '/': (context) => MyApp(),
+      '/detail': (context) => UploadPage(),
+    },
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -18,6 +27,7 @@ class _MyAppState extends State<MyApp> {
   var tab = 0;
   List dataFromServer = [];
   var scroll = ScrollController();
+  var userImage;
 
   getData(String uri) async {
     final result = await http.get(Uri.parse(uri));
@@ -55,7 +65,22 @@ class _MyAppState extends State<MyApp> {
         actions: [
           IconButton(
             icon: Icon(Icons.add_box_outlined),
-            onPressed: () {},
+            onPressed: () async {
+              final picker = ImagePicker();
+              final image = await picker.pickImage(source: ImageSource.gallery);
+              if (image != null) {
+                setState(() {
+                  userImage = File(image.path);
+                });
+              }
+              if (!mounted) return;
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (c) => UploadPage(
+                            userImage: userImage,
+                          )));
+            },
           )
         ],
       ),
@@ -122,5 +147,25 @@ class DefaultPost extends StatelessWidget {
     } else {
       return CircularProgressIndicator();
     }
+  }
+}
+
+class UploadPage extends StatelessWidget {
+  const UploadPage({Key? key, this.userImage}) : super(key: key);
+  final userImage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(),
+        body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          userImage == null ? SizedBox.shrink() : Image.file(userImage),
+          Text('이미지 업로드 화면'),
+          IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/');
+              },
+              icon: Icon(Icons.close)),
+        ]));
   }
 }
