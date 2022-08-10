@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import './style.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +46,14 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  uploadData(data) {
+    setState(() {
+      dataFromServer.add(data);
+      print(dataFromServer);
+    }
+    );
+  }
+
   @override
   void initState() {
     getData('https://codingapple1.github.io/app/data.json');
@@ -79,6 +88,7 @@ class _MyAppState extends State<MyApp> {
                   MaterialPageRoute(
                       builder: (c) => UploadPage(
                             userImage: userImage,
+                            uploadData: uploadData,
                           )));
             },
           )
@@ -124,7 +134,9 @@ class DefaultPost extends StatelessWidget {
     if (data.isNotEmpty) {
       return Column(
         children: [
-          Image.network(data[index]['image']),
+          data[index]['image'].runtimeType == String ?
+          Image.network(data[index]['image'], width: 500, height: 200) :
+          Image.file(data[index]['image'], width: 500, height: 200),
           Container(
             constraints: BoxConstraints(maxWidth: 600),
             padding: EdgeInsets.all(20.0),
@@ -151,16 +163,36 @@ class DefaultPost extends StatelessWidget {
 }
 
 class UploadPage extends StatelessWidget {
-  const UploadPage({Key? key, this.userImage}) : super(key: key);
+  UploadPage({Key? key, this.userImage, this.uploadData}) : super(key: key);
   final userImage;
+  final uploadData;
+  final textFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(),
         body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          userImage == null ? SizedBox.shrink() : Image.file(userImage),
+          userImage == null ? SizedBox.shrink() : Image.file(userImage, width: 500, height: 200),
           Text('이미지 업로드 화면'),
+          TextField(
+            controller: textFieldController,
+            maxLines: 1,
+          ),
+          TextButton(onPressed: (){
+            const likes = 0;
+            const user = 'Minjun Shin';
+            final content = textFieldController.text;
+            uploadData({
+              'id': 4,
+              'image': userImage,
+              'likes': likes,
+              'date' : 'Aug 10',
+              'content' : content,
+              'user' : user
+            });
+            Navigator.pushNamed(context, '/');
+          }, child: Text('Upload')),
           IconButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/');
