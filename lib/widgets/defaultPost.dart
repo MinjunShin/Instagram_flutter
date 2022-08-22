@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './profile.dart';
 
 class DefaultPost extends StatelessWidget {
   final List data;
@@ -24,8 +25,23 @@ class DefaultPost extends StatelessWidget {
                   children: [
                     Text('좋아요 ${data[index]['likes']}',
                         style: TextStyle(fontWeight: FontWeight.w700)),
-                    Text('${data[index]['user']}',
-                        style: TextStyle(color: Colors.grey)),
+                    GestureDetector(
+                        child: Text('${data[index]['user']}',
+                            style: TextStyle(color: Colors.grey)),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    ((context, animation, secondaryAnimation) =>
+                                        Profile()),
+                                transitionsBuilder: ((context, animation,
+                                        secondaryAnimation, child) =>
+                                    FadeTransition(
+                                        opacity: animation, child: child)),
+                                transitionDuration: Duration(milliseconds: 500),
+                              ));
+                        }),
                     Text('${data[index]['content']}',
                         style: TextStyle(color: Colors.grey)),
                   ]),
