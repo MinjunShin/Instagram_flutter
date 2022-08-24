@@ -11,8 +11,15 @@ import 'package:provider/provider.dart';
 import './store/store_ex.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-    create: (context) => StoreEx(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => StoreEx(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => StoreEx2(),
+      )
+    ],
     child: MaterialApp(
       theme: theme,
       initialRoute: '/',
